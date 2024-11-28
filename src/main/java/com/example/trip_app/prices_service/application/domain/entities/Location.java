@@ -4,12 +4,14 @@ import jakarta.persistence.Embeddable;
 import lombok.*;
 
 @Embeddable
-@NoArgsConstructor
 @Getter
 @Setter
 @Builder
 @AllArgsConstructor
-public class Cost {
-    private String currency;
-    private long price;
+@NoArgsConstructor
+public class Location {
+    private String longitude;
+    private String latitude;
+    private String city;
+    private String country;
 }

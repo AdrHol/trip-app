@@ -17,7 +17,10 @@ public class Price {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String userId;
-    private String location;
     private String product;
     private LocalDateTime postedAt;
+    @Embedded
+    private Cost cost;
+    @Embedded
+    private Location location;
 }

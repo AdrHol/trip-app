@@ -1,13 +1,13 @@
 package com.example.trip_app.prices_service.adapters.in.web;
 
+import com.example.trip_app.prices_service.application.domain.entities.Cost;
+import com.example.trip_app.prices_service.application.domain.entities.Location;
 import com.example.trip_app.prices_service.application.domain.entities.Price;
 import com.example.trip_app.prices_service.application.ports.in.web.GetPricesUseCase;
+import com.example.trip_app.prices_service.application.ports.in.web.NewPriceUseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -17,33 +17,32 @@ import java.util.List;
 public class PricesController {
 
     private final GetPricesUseCase getPricesUseCase;
+    private final NewPriceUseCase newPriceUseCase;
 
     @GetMapping()
     public ResponseEntity<List<Price>> getRecentlySearchedPrices() {
-        Price price = new Price();
-        price.setProduct("recently works !");
-        return ResponseEntity.ok().body(List.of(price));
+        return ResponseEntity.ok().body(getPricesUseCase.getRecentlySearchedPrices());
     }
 
     @GetMapping(params = {"long", "lat"})
-    public ResponseEntity<List<Price>> getPricesByCoordinates(@RequestParam("long") String longitude, @RequestParam("lat") String latitude) {
-        Price price = new Price();
-        price.setProduct(longitude);
-        price.setLocation(latitude);
-        return ResponseEntity.ok().body(List.of(price));
+    public ResponseEntity<List<Price>> getPricesByCoordinates(@RequestParam("long") String longitude,
+                                                              @RequestParam("lat") String latitude) {
+        return ResponseEntity.ok().body(getPricesUseCase.getPricesByCoordinates(longitude, latitude));
     }
 
-    @GetMapping(params = "city")
-    public ResponseEntity<List<Price>> getPricesByCity(@RequestParam("city") String city) {
-        Price price = new Price();
-        price.setProduct(city);
-        return ResponseEntity.ok().body(List.of(price));
+    @GetMapping(params = {"city", "country"})
+    public ResponseEntity<List<Price>> getPricesByCityAndCountry(@RequestParam("city") String city,
+                                                                 @RequestParam("country") String country){
+        return ResponseEntity.ok().body(getPricesUseCase.getPricesByCityAndCountry(city, country));
     }
 
-    @GetMapping(params = "country")
-    public ResponseEntity<List<Price>> getPricesByCountry(@RequestParam("country") String country) {
+    @PostMapping
+    public ResponseEntity<Price> postPrice(){
         Price price = new Price();
-        price.setLocation(country);
-        return ResponseEntity.ok().body(List.of(price));
+        price.setUserId("Ugewq4rc");
+        price.setProduct("dupa");
+        price.setLocation(Location.builder().city("Chojnow").country("Polska").longitude("dupa").latitude("cyc").build());
+        price.setCost(Cost.builder().currency("USD").price(1234L).build());
+        return ResponseEntity.ok(newPriceUseCase.createPriceUseCase(price));
     }
 }
