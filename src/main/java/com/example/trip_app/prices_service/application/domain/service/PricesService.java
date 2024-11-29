@@ -5,8 +5,8 @@ import com.example.trip_app.prices_service.application.domain.entities.mappers.P
 import com.example.trip_app.prices_service.application.ports.in.web.GetPricesUseCase;
 import com.example.trip_app.prices_service.application.ports.in.web.NewPriceUseCase;
 import com.example.trip_app.prices_service.application.ports.in.web.commands.CreatePriceCommand;
-import com.example.trip_app.prices_service.application.ports.out.PricesCreationPort;
-import com.example.trip_app.prices_service.application.ports.out.PricesRetrievalPort;
+import com.example.trip_app.prices_service.application.ports.out.persistance.PricesCreationPort;
+import com.example.trip_app.prices_service.application.ports.out.persistance.PricesRetrievalPort;
 import com.example.trip_app.prices_service.application.ports.out.web.GeoCodingPort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

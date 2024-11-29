@@ -1,4 +1,4 @@
-package com.example.trip_app.prices_service.configuration.data.feign;
+package com.example.trip_app.prices_service.configuration.feign;
 
 import org.springframework.cloud.openfeign.CollectionFormat;
 import org.springframework.cloud.openfeign.EnableFeignClients;

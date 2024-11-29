@@ -2,8 +2,8 @@ package com.example.trip_app.prices_service.adapters.out.persistance;
 
 import com.example.trip_app.prices_service.adapters.out.persistance.repositories.PricesRepository;
 import com.example.trip_app.prices_service.application.domain.entities.Price;
-import com.example.trip_app.prices_service.application.ports.out.PricesCreationPort;
-import com.example.trip_app.prices_service.application.ports.out.PricesRetrievalPort;
+import com.example.trip_app.prices_service.application.ports.out.persistance.PricesCreationPort;
+import com.example.trip_app.prices_service.application.ports.out.persistance.PricesRetrievalPort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
