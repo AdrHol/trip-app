@@ -32,10 +32,8 @@ public class GeocodingAdapter implements GeoCodingPort {
         return null;
     }
 
-    private void mapForwardGeocodingToLocation( ){
-
+    private void mapForwardGeocodingToLocation(){
     }
     private void mapReverseGeocodingToLocation(){
-
     }
 }
