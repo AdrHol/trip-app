@@ -1,9 +1,11 @@
 package org.holubecky.application.domain.service;
 
+import org.holubecky.application.domain.entities.Location;
 import org.holubecky.application.domain.entities.Price;
 import org.holubecky.application.domain.entities.mappers.PriceMapper;
 
 import lombok.RequiredArgsConstructor;
+import org.holubecky.application.domain.exceptions.LocationNotFoundException;
 import org.holubecky.application.ports.in.web.GetPricesUseCase;
 import org.holubecky.application.ports.in.web.NewPriceUseCase;
 import org.holubecky.application.ports.in.web.commands.CreatePriceCommand;
@@ -43,20 +45,23 @@ public class PricesService implements GetPricesUseCase, NewPriceUseCase {
     public Price createPriceUseCase(CreatePriceCommand createPriceCommand) {
         Price price = priceMapper.mapCreateCommandToPrice(createPriceCommand);
         price.setPostedAt(LocalDateTime.now());
+        Location normalizedLocation = null;
 
         if(price.hasCoordinatesFilled() && !price.hasCityAndCountry()) {
-            findLocationByCoordinates(price);
+            normalizedLocation = geoCodingPort.getLocationByCoordinates(price.getLocation().getLongitude(), price.getLocation().getLatitude());;
         }
 
         if(price.hasCityAndCountry() && !price.hasCoordinatesFilled()) {
-            findCoordinatesByCityAndCountry(price);
+            normalizedLocation = geoCodingPort.getCoordinatesByLocation(price.getLocation().getCity(), price.getLocation().getCountry());
         }
+
+        if(normalizedLocation == null) {
+            throw new LocationNotFoundException();
+        }
+
+        price.setLocation(normalizedLocation);
+
         return pricesCreationPort.createPrice(price);
     }
-    private void findLocationByCoordinates(Price price){
-        geoCodingPort.getLocationByCoordinates(price.getLocation().getLongitude(), price.getLocation().getLatitude());
-    }
-    private void findCoordinatesByCityAndCountry(Price price){
-        geoCodingPort.getCoordinatesByLocation(price.getLocation().getCity(), price.getLocation().getCountry());
-    }
+
 }
