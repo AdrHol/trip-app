@@ -3,5 +3,8 @@ server:
 spring:
   application:
     name: products-service
+  elasticsearch:
+    index:
+      auto-create: true
 
 
