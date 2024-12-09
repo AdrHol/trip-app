@@ -1,39 +1,42 @@
 package org.holubecky.adapters.in.web;
 
-import feign.Response;
-
-import org.holubecky.adapters.out.persistance.ElasticSearchAdapter;
+import co.elastic.clients.elasticsearch._types.query_dsl.Query;
+import lombok.RequiredArgsConstructor;
+import org.holubecky.adapters.out.persistance.repository.ElasticSearchRepository;
 import org.holubecky.application.domain.entity.ProductEntity;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.holubecky.application.ports.in.web.CreateProductUseCase;
+import org.holubecky.application.ports.in.web.dto.ProductCreationRequest;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.data.elasticsearch.core.IndexInformation;
+import org.springframework.data.elasticsearch.core.query.Criteria;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/")
+@RequestMapping()
+@RequiredArgsConstructor
 public class ProductsController {
 
-    @Autowired
-    private ElasticSearchAdapter elasticSearchAdapter;
+    private final CreateProductUseCase createProductUseCase;
+    private final ElasticSearchRepository elasticsearchOperations;
 
-    @GetMapping
-    public ResponseEntity<ProductEntity> test(){
-        ProductEntity entity = new ProductEntity();
-        entity.setTitle("test");
-        entity.setDescription("test");
+    @PostMapping("/similar")
+    public ResponseEntity<List<ProductEntity>> fetchSimilarProducts(@RequestBody ProductCreationRequest productCreationRequest){
+        return ResponseEntity.ok(createProductUseCase.fetchSimilarProducts(productCreationRequest));
+    }
 
-        ProductEntity result = elasticSearchAdapter.saveProduct(entity);
-
-        return ResponseEntity.ok(result);
+    @PostMapping("/add")
+    public ResponseEntity<ProductEntity> addProduct(){
+        return ResponseEntity.ok(new ProductEntity());
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<IndexInformation>> getProducts(){
-        return ResponseEntity.ok(elasticSearchAdapter.getProducts());
+    public ResponseEntity<List<ProductEntity>> getAll(){
+        List<ProductEntity> result = ((PageImpl<ProductEntity>) elasticsearchOperations.findAll()).stream().toList();
+        return ResponseEntity.ok(result);
     }
 
 }
