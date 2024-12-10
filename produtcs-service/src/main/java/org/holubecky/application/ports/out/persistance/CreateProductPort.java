@@ -7,6 +7,6 @@ import java.util.List;
 
 public interface CreateProductPort {
 
-    List<ProductEntity> fetchSimilarProducts(Product request);
-    ProductEntity saveProduct(Product product);
+    List<Product> fetchSimilarProducts(Product request);
+    Product saveProduct(Product product);
 }

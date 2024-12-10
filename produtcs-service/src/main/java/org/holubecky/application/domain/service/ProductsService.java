@@ -21,19 +21,32 @@ public class ProductsService implements CreateProductUseCase {
 
 
     @Override
-    public List<ProductEntity> fetchSimilarProducts(ProductCreationRequest productCreationRequest) {
-
-        if(!productCreationRequest.hasCoordinatesFilled()){
-            Location fetchedLocationEntity = geoCodingPort.getCoordinatesByLocation(productCreationRequest.getCity(), productCreationRequest.getCountry());
-        }
-        Product product = new Product();
-
+    public List<Product> fetchSimilarProducts(ProductCreationRequest productCreationRequest) {
+        Product product = prepareProduct(productCreationRequest);
+        checkLocationData(product, productCreationRequest);
         return createProductPort.fetchSimilarProducts(product);
     }
 
     @Override
-    public ProductEntity addNewProduct() {
+    public Product addNewProduct() {
         return null;
     }
 
+    private Product prepareProduct(ProductCreationRequest productCreationRequest){
+        return Product.builder()
+                .description(productCreationRequest.getDescription())
+                .title(productCreationRequest.getTitle())
+                .build();
+    }
+    private void checkLocationData(Product domainObject, ProductCreationRequest productCreationRequest){
+        if(productCreationRequest.hasCoordinatesFilled() && productCreationRequest.hasCityAndCountry()){
+            return;
+        }
+
+        Location newLocation = productCreationRequest.hasCoordinatesFilled() ?
+                geoCodingPort.getLocationByCoordinates(productCreationRequest.getLon(), productCreationRequest.getLat())
+                : geoCodingPort.getCoordinatesByLocation(productCreationRequest.getCity(), productCreationRequest.getCountry());
+
+        domainObject.setLocation(newLocation);
+    }
 }

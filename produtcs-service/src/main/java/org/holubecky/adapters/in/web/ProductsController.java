@@ -1,8 +1,10 @@
 package org.holubecky.adapters.in.web;
 
 import lombok.RequiredArgsConstructor;
+import org.holubecky.adapters.in.web.exceptions.InvalidCommandException;
 import org.holubecky.adapters.out.persistance.repository.ElasticSearchRepository;
 import org.holubecky.adapters.out.persistance.repository.ProductEntity;
+import org.holubecky.application.domain.model.Product;
 import org.holubecky.application.ports.in.web.CreateProductUseCase;
 import org.holubecky.application.ports.in.web.dto.ProductCreationRequest;
 import org.springframework.data.domain.PageImpl;
@@ -20,7 +22,10 @@ public class ProductsController {
     private final ElasticSearchRepository elasticsearchOperations;
 
     @PostMapping("/similar")
-    public ResponseEntity<List<ProductEntity>> fetchSimilarProducts(@RequestBody ProductCreationRequest productCreationRequest){
+    public ResponseEntity<List<Product>> fetchSimilarProductsInArea(@RequestBody ProductCreationRequest productCreationRequest){
+        if(!productCreationRequest.hasCityAndCountry() && !productCreationRequest.hasCoordinatesFilled()){
+            throw new InvalidCommandException();
+        }
         return ResponseEntity.ok(createProductUseCase.fetchSimilarProducts(productCreationRequest));
     }
 

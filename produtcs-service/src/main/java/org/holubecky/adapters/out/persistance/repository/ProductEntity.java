@@ -10,6 +10,8 @@ import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
 import org.springframework.data.elasticsearch.annotations.TermVector;
 
+import java.time.LocalDateTime;
+
 @Document(indexName = "products")
 @NoArgsConstructor
 @Getter
@@ -21,6 +23,9 @@ public class ProductEntity {
     private String title;
     @Field(type = FieldType.Text, termVector = TermVector.with_positions_offsets, analyzer = "standard")
     private String description;
+    @Field(type = FieldType.Date)
+    private LocalDateTime createdAt;
+    private String createdBy;
     @Field(type = FieldType.Nested)
     private LocationEntity locationEntity;
 }
