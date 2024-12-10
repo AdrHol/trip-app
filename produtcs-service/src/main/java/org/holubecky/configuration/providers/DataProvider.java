@@ -1,6 +1,6 @@
 package org.holubecky.configuration.providers;
 
-import org.holubecky.application.domain.entity.ProductEntity;
+import org.holubecky.adapters.out.persistance.repository.ProductEntity;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

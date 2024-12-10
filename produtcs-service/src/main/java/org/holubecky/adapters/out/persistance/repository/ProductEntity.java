@@ -1,7 +1,5 @@
-package org.holubecky.application.domain.entity;
+package org.holubecky.adapters.out.persistance.repository;
 
-import co.elastic.clients.elasticsearch._types.analysis.Analyzer;
-import co.elastic.clients.elasticsearch._types.analysis.AnalyzerVariant;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -10,6 +8,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
+import org.springframework.data.elasticsearch.annotations.TermVector;
 
 @Document(indexName = "products")
 @NoArgsConstructor
@@ -18,9 +17,10 @@ import org.springframework.data.elasticsearch.annotations.FieldType;
 public class ProductEntity {
     @Id
     private String id;
-    @Field(type = FieldType.Text)
+    @Field(type = FieldType.Text, termVector = TermVector.with_positions_offsets, analyzer = "standard")
     private String title;
-    @Field(type = FieldType.Text)
+    @Field(type = FieldType.Text, termVector = TermVector.with_positions_offsets, analyzer = "standard")
     private String description;
-
+    @Field(type = FieldType.Nested)
+    private LocationEntity locationEntity;
 }

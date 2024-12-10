@@ -1,13 +1,10 @@
 package org.holubecky.application.domain.entities.mappers;
 
 import org.holubecky.application.domain.entities.Cost;
-import org.holubecky.application.domain.entities.Location;
 import org.holubecky.application.domain.entities.Price;
 
 import org.holubecky.application.ports.in.web.commands.CreatePriceCommand;
 import org.springframework.stereotype.Component;
-
-import java.time.LocalDateTime;
 
 @Component
 public class PriceMapper {

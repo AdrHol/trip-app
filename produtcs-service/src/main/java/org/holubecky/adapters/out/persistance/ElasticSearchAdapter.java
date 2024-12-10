@@ -1,19 +1,13 @@
 package org.holubecky.adapters.out.persistance;
 
-
-
-
 import co.elastic.clients.elasticsearch._types.query_dsl.Like;
 import co.elastic.clients.elasticsearch._types.query_dsl.MoreLikeThisQuery;
 import lombok.RequiredArgsConstructor;
-import org.elasticsearch.synonyms.PagedResult;
-import org.holubecky.adapters.out.persistance.repository.ElasticSearchRepository;
-import org.holubecky.application.domain.entity.ProductEntity;
-import org.holubecky.application.ports.in.web.dto.ProductCreationRequest;
+import org.holubecky.adapters.out.persistance.repository.LocationEntity;
+import org.holubecky.application.domain.model.Product;
+import org.holubecky.adapters.out.persistance.repository.ProductEntity;
 import org.holubecky.application.ports.out.persistance.CreateProductPort;
 import org.holubecky.application.ports.out.persistance.RetrieveProductPort;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.elasticsearch.client.elc.NativeQuery;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.data.elasticsearch.core.IndexInformation;
@@ -30,15 +24,16 @@ public class ElasticSearchAdapter implements CreateProductPort, RetrieveProductP
     private final ElasticsearchOperations elasticsearchOperations;
 
     @Override
-    public List<ProductEntity> fetchSimilarProducts(ProductCreationRequest request) {
-
-        MoreLikeThisQuery query = MoreLikeThisQuery.of(e -> e.fields("title", "description")
-                .like(new Like.Builder().text(request.title()).build(), new Like.Builder().text(request.description()).build())
-                .minTermFreq(1)
-                .analyzer("standard"));
+    public List<ProductEntity> fetchSimilarProducts(Product queryEntity) {
+        MoreLikeThisQuery query = MoreLikeThisQuery.of(
+                e -> e.fields("title", "description")
+                        .like(new Like.Builder().text(queryEntity.getTitle()).build(), new Like.Builder().text(queryEntity.getDescription()).build())
+                        .minTermFreq(1)
+                        .maxQueryTerms(12)
+                        .analyzer("standard")
+        );
         Query nativeQuery = NativeQuery.builder()
                 .withQuery(query._toQuery()).build();
-
 
         SearchHits<ProductEntity> result = elasticsearchOperations.search(nativeQuery, ProductEntity.class);
 
@@ -46,9 +41,9 @@ public class ElasticSearchAdapter implements CreateProductPort, RetrieveProductP
     }
 
     @Override
-    public ProductEntity saveProduct(ProductEntity product) {
-        ProductEntity result = elasticsearchOperations.save(product);
-        return result;
+    public ProductEntity saveProduct(Product product) {
+
+        return elasticsearchOperations.save(product);
     }
 
 
@@ -57,10 +52,17 @@ public class ElasticSearchAdapter implements CreateProductPort, RetrieveProductP
         return elasticsearchOperations.indexOps(ProductEntity.class).getInformation();
     }
 
-    private ProductEntity mapRequestToEntity(ProductCreationRequest productCreationRequest){
-        ProductEntity product = new ProductEntity();
-        product.setTitle(productCreationRequest.title());
-        product.setDescription(productCreationRequest.description());
+    private ProductEntity mapDomainToEntity(Product domainObject){
+        ProductEntity productEntity = new ProductEntity();
+        productEntity.setTitle(domainObject.getTitle());
+        productEntity.setDescription(domainObject.getDescription());
+        new LocationEntity();
+        productEntity.setLocationEntity(
+                LocationEntity.builder().city(domainObject.getLocationEntity().getCity())
+                .country(domainObject.getLocationEntity().getCountry())
+                .coordinates()
+                .build());
         return new ProductEntity();
     }
+
 }

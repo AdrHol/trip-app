@@ -1,13 +1,14 @@
 package org.holubecky.adapters.out.web.geocoding;
 
-
 import lombok.RequiredArgsConstructor;
-import org.holubecky.adapters.out.web.dto.ForwardGeocodingApiResponse;
-import org.holubecky.adapters.out.web.dto.ReverseGeocodingResponse;
-import org.holubecky.adapters.out.web.geocoding.feignClient.GeocodingClient;
-import org.holubecky.application.domain.entities.Location;
-import org.holubecky.application.domain.exceptions.LocationNotFoundException;
+import org.holubecky.adapters.out.web.geocoding.dto.ForwardGeocodingApiResponse;
+import org.holubecky.adapters.out.web.geocoding.dto.ReverseGeocodingApiResponse;
+import org.holubecky.adapters.out.web.geocoding.exceptions.LocationNotFoundException;
+import org.holubecky.adapters.out.web.geocoding.feignClient.LocationiqClient;
+import org.holubecky.adapters.out.persistance.repository.LocationEntity;
+import org.holubecky.application.domain.model.Location;
 import org.holubecky.application.ports.out.web.GeoCodingPort;
+import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -16,12 +17,12 @@ import java.util.List;
 @RequiredArgsConstructor
 public class GeocodingAdapter implements GeoCodingPort {
 
-    private final GeocodingClient geocodingClient;
+    private final LocationiqClient geocodingClient;
     private final String API = "secret";
 
     @Override
     public Location getLocationByCoordinates(String lon, String lat) {
-        ReverseGeocodingResponse response = geocodingClient.reverseGeocodingRequest(API, lat, lon, "json");
+        ReverseGeocodingApiResponse response = geocodingClient.reverseGeocodingRequest(API, lat, lon, "json");
 
         if(response == null){
             throw new LocationNotFoundException();
@@ -44,19 +45,17 @@ public class GeocodingAdapter implements GeoCodingPort {
         Location result = new Location();
         result.setCity(city);
         result.setCountry(country);
-        result.setLatitude(response.lat());
-        result.setLongitude(response.lon());
-
+        result.setLat(response.lat());
+        result.setLon(response.lon());
         return result;
     }
-    private Location mapReverseGeocodingToLocation(ReverseGeocodingResponse response){
+    private Location mapReverseGeocodingToLocation(ReverseGeocodingApiResponse response){
         Location result = new Location();
         String city = response.address().city() == null ? response.address().town() : response.address().city();
-
         result.setCity(city);
         result.setCountry(response.address().country());
-        result.setLatitude(response.lat());
-        result.setLongitude(response.lon());
+        result.setLat(response.lat());
+        result.setLon(response.lon());
         return result;
     }
 }

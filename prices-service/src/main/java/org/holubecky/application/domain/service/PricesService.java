@@ -1,6 +1,5 @@
 package org.holubecky.application.domain.service;
 
-import org.holubecky.application.domain.entities.Location;
 import org.holubecky.application.domain.entities.Price;
 import org.holubecky.application.domain.entities.mappers.PriceMapper;
 
@@ -11,7 +10,6 @@ import org.holubecky.application.ports.in.web.NewPriceUseCase;
 import org.holubecky.application.ports.in.web.commands.CreatePriceCommand;
 import org.holubecky.application.ports.out.persistance.PricesCreationPort;
 import org.holubecky.application.ports.out.persistance.PricesRetrievalPort;
-import org.holubecky.application.ports.out.web.GeoCodingPort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -23,7 +21,6 @@ public class PricesService implements GetPricesUseCase, NewPriceUseCase {
 
     private final PricesRetrievalPort pricesRetrievalPort;
     private final PricesCreationPort pricesCreationPort;
-    private final GeoCodingPort geoCodingPort;
     private final PriceMapper priceMapper;
 
     @Override
@@ -45,21 +42,6 @@ public class PricesService implements GetPricesUseCase, NewPriceUseCase {
     public Price createPriceUseCase(CreatePriceCommand createPriceCommand) {
         Price price = priceMapper.mapCreateCommandToPrice(createPriceCommand);
         price.setPostedAt(LocalDateTime.now());
-        Location normalizedLocation = null;
-
-        if(price.hasCoordinatesFilled() && !price.hasCityAndCountry()) {
-            normalizedLocation = geoCodingPort.getLocationByCoordinates(price.getLocation().getLongitude(), price.getLocation().getLatitude());;
-        }
-
-        if(price.hasCityAndCountry() && !price.hasCoordinatesFilled()) {
-            normalizedLocation = geoCodingPort.getCoordinatesByLocation(price.getLocation().getCity(), price.getLocation().getCountry());
-        }
-
-        if(normalizedLocation == null) {
-            throw new LocationNotFoundException();
-        }
-
-        price.setLocation(normalizedLocation);
 
         return pricesCreationPort.createPrice(price);
     }

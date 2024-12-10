@@ -2,7 +2,6 @@ package org.holubecky.configuration.data;
 
 import org.holubecky.adapters.out.persistance.repositories.PricesRepository;
 import org.holubecky.application.domain.entities.Cost;
-import org.holubecky.application.domain.entities.Location;
 import org.holubecky.application.domain.entities.Price;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
