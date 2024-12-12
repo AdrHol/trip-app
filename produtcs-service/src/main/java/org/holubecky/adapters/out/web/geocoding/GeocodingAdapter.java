@@ -5,10 +5,8 @@ import org.holubecky.adapters.out.web.geocoding.dto.ForwardGeocodingApiResponse;
 import org.holubecky.adapters.out.web.geocoding.dto.ReverseGeocodingApiResponse;
 import org.holubecky.adapters.out.web.geocoding.exceptions.LocationNotFoundException;
 import org.holubecky.adapters.out.web.geocoding.feignClient.LocationiqClient;
-import org.holubecky.adapters.out.persistance.repository.LocationEntity;
 import org.holubecky.application.domain.model.Location;
 import org.holubecky.application.ports.out.web.GeoCodingPort;
-import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 import org.springframework.stereotype.Component;
 
 import java.util.List;

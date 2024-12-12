@@ -1,5 +1,6 @@
 package org.holubecky.application.domain.service;
 
+import org.holubecky.adapters.out.web.services.product.dto.ProductDTO;
 import org.holubecky.application.domain.entities.Price;
 import org.holubecky.application.domain.entities.mappers.PriceMapper;
 
@@ -10,6 +11,8 @@ import org.holubecky.application.ports.in.web.NewPriceUseCase;
 import org.holubecky.application.ports.in.web.commands.CreatePriceCommand;
 import org.holubecky.application.ports.out.persistance.PricesCreationPort;
 import org.holubecky.application.ports.out.persistance.PricesRetrievalPort;
+import org.holubecky.application.ports.out.web.dto.PriceDTO;
+import org.holubecky.application.ports.out.web.services.product.ProductServicePort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -21,29 +24,33 @@ public class PricesService implements GetPricesUseCase, NewPriceUseCase {
 
     private final PricesRetrievalPort pricesRetrievalPort;
     private final PricesCreationPort pricesCreationPort;
+    private final ProductServicePort productServicePort;
     private final PriceMapper priceMapper;
 
     @Override
-    public List<Price> getRecentlySearchedPrices() {
-        return pricesRetrievalPort.getAllPrices();
+    public List<PriceDTO> getRecentlySearchedPrices() {
+        return pricesRetrievalPort.getAllPrices().stream().map(priceMapper::mapPriceToDTO).toList();
     }
 
     @Override
-    public List<Price> getPricesByCoordinates(String longitude, String latitude) {
-        return pricesRetrievalPort.getPricesByCords(longitude, latitude);
+    public List<PriceDTO> getPricesByCoordinates(String longitude, String latitude) {
+        return pricesRetrievalPort.getPricesByCords(longitude, latitude).stream().map(priceMapper::mapPriceToDTO).toList();
     }
 
     @Override
-    public List<Price> getPricesByCityAndCountry(String city, String country) {
-        return pricesRetrievalPort.getPricesByLocation(country, city);
+    public List<PriceDTO> getPricesByCityAndCountry(String city, String country) {
+        return pricesRetrievalPort.getPricesByLocation(country, city).stream().map(priceMapper::mapPriceToDTO).toList();
     }
 
     @Override
-    public Price createPriceUseCase(CreatePriceCommand createPriceCommand) {
+    public PriceDTO createPriceUseCase(CreatePriceCommand createPriceCommand) {
         Price price = priceMapper.mapCreateCommandToPrice(createPriceCommand);
+
+        ProductDTO product = productServicePort.requestProductDetails(createPriceCommand.productId());
+
         price.setPostedAt(LocalDateTime.now());
 
-        return pricesCreationPort.createPrice(price);
+        return priceMapper.mapPriceToDTO(pricesCreationPort.createPrice(price));
     }
 
 }

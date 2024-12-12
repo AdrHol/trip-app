@@ -1,19 +1,19 @@
-package org.holubecky.application.domain.entities;
+package org.holubecky.adapters.out.persistance.repositories;
 
-import ch.qos.logback.core.util.StringUtil;
 import jakarta.persistence.*;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.holubecky.application.domain.entities.Cost;
 
 import java.time.LocalDateTime;
 
-@Entity
-@Table(name = "prices")
+
+@Entity @Table
+@Getter @Setter
 @NoArgsConstructor
-@Getter
-@Setter
-public class Price {
+public class PriceEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -26,9 +26,4 @@ public class Price {
     private String country;
     private Double latitude;
     private Double longitude;
-
-    public boolean hasNoLocationData(){
-        return StringUtil.isNullOrEmpty(this.city) && StringUtil.isNullOrEmpty(this.country) && this.latitude.describeConstable().isEmpty()
-                && this.longitude.describeConstable().isEmpty();
-    }
 }

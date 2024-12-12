@@ -9,11 +9,11 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface PricesRepository extends JpaRepository<Price, Long> {
+public interface PricesRepository extends JpaRepository<PriceEntity, Long> {
 
-    @Query("SELECT p FROM Price p WHERE p.location.longitude =:long AND p.location.latitude=:lat")
-    List<Price> getAllPricesByCoordinates(@Param("long") String longitude, @Param("lat") String latitude);
+    @Query("SELECT p FROM Price p WHERE p.longitude =:long AND p.latitude=:lat")
+    List<PriceEntity> getAllPricesByCoordinates(@Param("long") String longitude, @Param("lat") String latitude);
 
-    @Query("SELECT p from Price p WHERE p.location.country =:country AND p.location.city=:city")
-    List<Price> getAllPricesByCityAndCountry(@Param("country") String country, @Param("city") String city);
+    @Query("SELECT p from Price p WHERE p.country =:country AND p.city=:city")
+    List<PriceEntity> getAllPricesByCityAndCountry(@Param("country") String country, @Param("city") String city);
 }
