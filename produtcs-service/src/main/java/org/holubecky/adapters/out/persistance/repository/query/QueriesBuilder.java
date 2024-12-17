@@ -1,4 +1,4 @@
-package org.holubecky.adapters.out.persistance.repository;
+package org.holubecky.adapters.out.persistance.repository.query;
 
 import co.elastic.clients.elasticsearch._types.LatLonGeoLocation;
 import co.elastic.clients.elasticsearch._types.query_dsl.GeoDistanceQuery;
@@ -18,6 +18,7 @@ public class QueriesBuilder {
                                 new Like.Builder().text(descriptionValue).build())
                         .minTermFreq(1)
                         .maxQueryTerms(12)
+                        .minDocFreq(1)
                         .analyzer("standard")
         );
     }

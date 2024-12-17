@@ -1,4 +1,4 @@
-package org.holubecky.adapters.out.persistance.repository;
+package org.holubecky.adapters.out.persistance.repository.entity;
 
 import lombok.*;
 import org.springframework.data.elasticsearch.annotations.Field;
