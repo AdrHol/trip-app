@@ -1,6 +1,7 @@
 package org.holubecky.application.domain.entities.mappers;
 
 import org.holubecky.adapters.out.persistance.repositories.PriceEntity;
+import org.holubecky.adapters.out.web.services.product.dto.ProductDTO;
 import org.holubecky.application.domain.entities.Cost;
 import org.holubecky.application.domain.entities.Price;
 
@@ -9,6 +10,8 @@ import org.holubecky.application.ports.in.web.commands.CreatePriceCommand;
 import org.holubecky.application.ports.out.web.dto.LocationDTO;
 import org.holubecky.application.ports.out.web.dto.PriceDTO;
 import org.springframework.stereotype.Component;
+
+import java.time.LocalDateTime;
 
 @Component
 public class PriceMapper {
@@ -46,15 +49,23 @@ public class PriceMapper {
         }
         PriceEntity priceEntity = new PriceEntity();
         priceEntity.setId(price.getId());
-        priceEntity.setUserId(priceEntity.getUserId());
-        priceEntity.setProductId(priceEntity.getProductId());
+        priceEntity.setUserId(price.getUserId());
+        priceEntity.setProductId(price.getProductId());
         priceEntity.setCost(
-                Cost.builder().price(priceEntity.getCost().getPrice()).currency(priceEntity.getCost().getCurrency()).build());
-        priceEntity.setCity(priceEntity.getCity());
-        priceEntity.setCountry(priceEntity.getCountry());
-        priceEntity.setLatitude(priceEntity.getLatitude());
-        priceEntity.setLongitude(priceEntity.getLongitude());
+                Cost.builder().price(price.getCost().getPrice()).currency(price.getCost().getCurrency()).build());
+        priceEntity.setCity(price.getCity());
+        priceEntity.setCountry(price.getCountry());
+        priceEntity.setLatitude(price.getLatitude());
+        priceEntity.setLongitude(price.getLongitude());
 
         return priceEntity;
+    }
+
+    public void mapProductResponseToPrice(ProductDTO productDTO, Price price){
+        price.setPostedAt(LocalDateTime.now());
+        price.setCity(productDTO.location().city());
+        price.setCountry(productDTO.location().country());
+        price.setLongitude(productDTO.location().lon());
+        price.setLatitude(productDTO.location().lat());
     }
 }

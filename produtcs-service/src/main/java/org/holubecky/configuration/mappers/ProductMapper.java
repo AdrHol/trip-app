@@ -6,6 +6,7 @@ import org.holubecky.adapters.out.persistance.repository.entity.ProductEntity;
 import org.holubecky.application.domain.model.Location;
 import org.holubecky.application.domain.model.Product;
 import org.holubecky.application.ports.in.web.dto.LocationDTO;
+import org.holubecky.application.ports.in.web.dto.ProductCreationRequest;
 import org.holubecky.application.ports.in.web.dto.ProductDTO;
 import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 import org.springframework.stereotype.Component;
@@ -35,12 +36,10 @@ public class ProductMapper {
         product.setId(productEntity.getId());
         product.setTitle(productEntity.getTitle());
         product.setDescription(productEntity.getDescription());
-        product.setLocation(Location.builder().city("DUMMY_CITY").country("DUMMY_COUNTRY").lon(43.31).lat(42.4256).build());
-//        product.setLocation(Location.builder().city(productEntity.getLocationEntity().getCity())
-//                .country(productEntity.getLocationEntity().getCountry())
-//                .lat(productEntity.getLocationEntity().getCoordinates().getLat())
-//                .lon(productEntity.getLocationEntity().getCoordinates().getLon()).build());
-
+        product.setLocation(Location.builder().city(productEntity.getLocationEntity().getCity())
+                .country(productEntity.getLocationEntity().getCountry())
+                .lat(productEntity.getLocationEntity().getCoordinates().getLat())
+                .lon(productEntity.getLocationEntity().getCoordinates().getLon()).build());
         return product;
     }
 
@@ -48,11 +47,21 @@ public class ProductMapper {
         return ProductDTO.builder().id(product.getId())
                 .title(product.getTitle())
                 .description(product.getDescription())
-                .locationDTO(LocationDTO.builder().city(product.getLocation().getCity())
+                .location(LocationDTO.builder().city(product.getLocation().getCity())
                         .country(product.getLocation().getCountry())
                         .lat(product.getLocation().getLat())
                         .lon(product.getLocation().getLon())
                         .build())
+                .build();
+    }
+    public Product mapCreationRequestToModel(ProductCreationRequest productCreationRequest){
+        return Product.builder()
+                .title(productCreationRequest.getTitle())
+                .description(productCreationRequest.getDescription())
+                .location(Location.builder().city(productCreationRequest.getCity())
+                        .country(productCreationRequest.getCountry())
+                        .lat(productCreationRequest.getLat())
+                        .lon(productCreationRequest.getLon()).build())
                 .build();
     }
 }

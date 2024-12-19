@@ -41,7 +41,7 @@ public class ProductsController {
     }
 
     @PostMapping()
-    public ResponseEntity<List<Product>> fetchSimilarProductsInArea(@RequestBody ProductCreationRequest productCreationRequest){
+    public ResponseEntity<ProductRequestResponse> fetchSimilarProductsInArea(@RequestBody ProductCreationRequest productCreationRequest){
         if(!productCreationRequest.hasCityAndCountry() && !productCreationRequest.hasCoordinatesFilled()){
             throw new InvalidCommandException();
         }
@@ -55,7 +55,11 @@ public class ProductsController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<ProductEntity> addProduct(){
-        return ResponseEntity.ok(new ProductEntity());
+    public ResponseEntity<ProductRequestResponse> addProduct(@RequestBody ProductCreationRequest productCreationRequest){
+        if(!productCreationRequest.hasCityAndCountry() && !productCreationRequest.hasCoordinatesFilled()){
+            throw new InvalidCommandException();
+        }
+
+        return ResponseEntity.ok(createProductUseCase.addNewProduct(productCreationRequest));
     }
 }

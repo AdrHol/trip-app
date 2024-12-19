@@ -9,7 +9,6 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 public class ProductRequestResponse {
-    private RequestStatus response;
+    private boolean response;
     private List<ProductDTO> body = new ArrayList<>();
-
 }

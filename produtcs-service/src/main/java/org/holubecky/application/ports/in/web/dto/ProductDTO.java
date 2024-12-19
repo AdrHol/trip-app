@@ -11,5 +11,5 @@ public class ProductDTO {
     private String id;
     private String title;
     private String description;
-    private LocationDTO locationDTO;
+    private LocationDTO location;
 }

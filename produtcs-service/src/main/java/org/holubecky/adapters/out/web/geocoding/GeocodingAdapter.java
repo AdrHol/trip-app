@@ -19,8 +19,8 @@ public class GeocodingAdapter implements GeoCodingPort {
     private final String API = "secret";
 
     @Override
-    public Location getLocationByCoordinates(String lon, String lat) {
-        ReverseGeocodingApiResponse response = geocodingClient.reverseGeocodingRequest(API, lat, lon, "json");
+    public Location getLocationByCoordinates(Double lon, Double lat) {
+        ReverseGeocodingApiResponse response = geocodingClient.reverseGeocodingRequest(API, String.valueOf(lat), String.valueOf(lon), "json");
 
         if(response == null){
             throw new LocationNotFoundException();

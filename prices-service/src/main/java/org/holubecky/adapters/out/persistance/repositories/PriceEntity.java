@@ -10,7 +10,7 @@ import org.holubecky.application.domain.entities.Cost;
 import java.time.LocalDateTime;
 
 
-@Entity @Table
+@Entity @Table(name = "prices")
 @Getter @Setter
 @NoArgsConstructor
 public class PriceEntity {

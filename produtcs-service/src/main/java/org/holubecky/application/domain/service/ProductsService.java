@@ -30,15 +30,31 @@ public class ProductsService implements CreateProductUseCase, FetchProductUseCas
 
 
     @Override
-    public List<Product> fetchSimilarProducts(ProductCreationRequest productCreationRequest) {
-        Product product = prepareProduct(productCreationRequest);
-        checkLocationData(product, productCreationRequest);
-        return createProductPort.fetchSimilarProducts(product);
+    public ProductRequestResponse fetchSimilarProducts(ProductCreationRequest productCreationRequest) {
+        Product requestedProduct = prepareProduct(productCreationRequest);
+        checkLocationData(requestedProduct, productCreationRequest);
+        List<ProductDTO> result = createProductPort.fetchSimilarProducts(requestedProduct).stream()
+                .map(mapper::mapProductToDto).toList();
+        RequestStatus status = result.isEmpty() ? RequestStatus.ENTITY_NOT_FOUND : RequestStatus.ENTITY_FOUND;
+
+        return ProductRequestResponse.builder().response(status.get()).body(result).build();
     }
 
     @Override
-    public Product addNewProduct() {
-        return null;
+    public ProductRequestResponse addNewProduct(ProductCreationRequest productCreationRequest) {
+        Product newProduct = mapper.mapCreationRequestToModel(productCreationRequest);
+        checkLocationData(newProduct, productCreationRequest);
+        List<ProductDTO> body = new ArrayList<>();
+        Product created = createProductPort.saveProduct(newProduct);
+        RequestStatus status = RequestStatus.ENTITY_NOT_FOUND;
+
+        if(created.getId() != null){
+            body.add(mapper.mapProductToDto(created));
+            status = RequestStatus.ENTITY_FOUND;
+        }
+
+        return ProductRequestResponse.builder()
+                .response(status.get()).body(body).build();
     }
     @Override
     public ProductRequestResponse getProductById(String id) {
@@ -51,7 +67,7 @@ public class ProductsService implements CreateProductUseCase, FetchProductUseCas
             body.add(mapper.mapProductToDto(searchResult.get()));
         }
         return ProductRequestResponse.builder()
-                .response(status)
+                .response(status.get())
                 .body(body)
                 .build();
     }
@@ -61,7 +77,7 @@ public class ProductsService implements CreateProductUseCase, FetchProductUseCas
         List<Product> searchResult = retrieveProductPort.fetchProductsBySimilarDescription(title.orElse(""), description.orElse(""));
         List<ProductDTO> body = searchResult.stream().map(mapper::mapProductToDto).toList();
         RequestStatus status = searchResult.isEmpty() ? RequestStatus.ENTITY_NOT_FOUND : RequestStatus.ENTITY_FOUND;
-        return ProductRequestResponse.builder().response(status).body(body).build();
+        return ProductRequestResponse.builder().response(status.get()).body(body).build();
     }
 
     private Product prepareProduct(ProductCreationRequest productCreationRequest){
@@ -71,10 +87,6 @@ public class ProductsService implements CreateProductUseCase, FetchProductUseCas
                 .build();
     }
     private void checkLocationData(Product domainObject, ProductCreationRequest productCreationRequest){
-        if(productCreationRequest.hasCoordinatesFilled() && productCreationRequest.hasCityAndCountry()){
-            return;
-        }
-
         Location newLocation = productCreationRequest.hasCoordinatesFilled() ?
                 geoCodingPort.getLocationByCoordinates(productCreationRequest.getLon(), productCreationRequest.getLat())
                 : geoCodingPort.getCoordinatesByLocation(productCreationRequest.getCity(), productCreationRequest.getCountry());

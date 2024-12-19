@@ -29,13 +29,19 @@ public class PricesAdapter implements PricesRetrievalPort, PricesCreationPort {
     }
 
     @Override
-    public List<Price> getPricesByCords(String longitude, String latitude) {
+    public List<Price> getPricesByCords(Double longitude, Double latitude) {
         return pricesRepository.getAllPricesByCoordinates(longitude,latitude).stream().map(priceMapper::priceEntityToDomainModel).toList();
     }
 
     @Override
     public List<Price> getPricesByLocation(String country, String city) {
         return pricesRepository.getAllPricesByCityAndCountry(country, city).stream().map(priceMapper::priceEntityToDomainModel).toList();
+    }
+
+    @Override
+    public List<Price> getPricesByProductId(String productId) {
+        List<PriceEntity> result = pricesRepository.getAllPricesByProductId(productId);
+        return result.stream().map(priceMapper::priceEntityToDomainModel).toList();
     }
 
     @Override

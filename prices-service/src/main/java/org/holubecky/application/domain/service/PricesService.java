@@ -33,7 +33,7 @@ public class PricesService implements GetPricesUseCase, NewPriceUseCase {
     }
 
     @Override
-    public List<PriceDTO> getPricesByCoordinates(String longitude, String latitude) {
+    public List<PriceDTO> getPricesByCoordinates(Double longitude, Double latitude) {
         return pricesRetrievalPort.getPricesByCords(longitude, latitude).stream().map(priceMapper::mapPriceToDTO).toList();
     }
 
@@ -43,12 +43,16 @@ public class PricesService implements GetPricesUseCase, NewPriceUseCase {
     }
 
     @Override
+    public List<PriceDTO> getPricesByProductId(String productId) {
+        return pricesRetrievalPort.getPricesByProductId(productId).stream().map(priceMapper::mapPriceToDTO).toList();
+    }
+
+    @Override
     public PriceDTO createPriceUseCase(CreatePriceCommand createPriceCommand) {
         Price price = priceMapper.mapCreateCommandToPrice(createPriceCommand);
 
-        ProductDTO product = productServicePort.requestProductDetails(createPriceCommand.productId());
-
-        price.setPostedAt(LocalDateTime.now());
+        ProductDTO productServiceResponse = productServicePort.requestProductDetails(createPriceCommand.productId());
+        priceMapper.mapProductResponseToPrice(productServiceResponse, price);
 
         return priceMapper.mapPriceToDTO(pricesCreationPort.createPrice(price));
     }
