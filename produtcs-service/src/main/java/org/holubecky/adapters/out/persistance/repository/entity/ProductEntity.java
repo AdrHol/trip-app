@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
@@ -22,6 +23,7 @@ public class ProductEntity {
     private String title;
     @Field(type = FieldType.Text, analyzer = "standard")
     private String description;
+    @CreatedDate
     @Field(type = FieldType.Date)
     private LocalDateTime createdAt;
     private String createdBy;

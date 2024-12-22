@@ -4,6 +4,6 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@EnableFeignClients(basePackages = "org.holubecky.adapters.out.web.geocoding.feignClient")
+@EnableFeignClients(basePackages = "org.holubecky.adapters.out.web")
 public class FeignConfiguration {
 }

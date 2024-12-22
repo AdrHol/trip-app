@@ -36,7 +36,8 @@ public class ProductsController {
             return ResponseEntity.badRequest().build();
         }
 
-        return ResponseEntity.ok(fetchProductUseCase.getProductByTitleAndOrDescription(Optional.ofNullable(title), Optional.ofNullable(description)));
+        return ResponseEntity.ok(fetchProductUseCase.getProductByTitleAndOrDescription(Optional.ofNullable(title),
+                Optional.ofNullable(description)));
     }
 
     @PostMapping()

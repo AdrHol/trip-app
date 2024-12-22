@@ -47,6 +47,6 @@ public class PricesAdapter implements PricesRetrievalPort, PricesCreationPort {
     @Override
     public Price createPrice(Price price) {
         PriceEntity priceEntity = priceMapper.priceDomainModelToEntity(price);
-        return priceMapper.priceEntityToDomainModel(priceEntity);
+        return priceMapper.priceEntityToDomainModel(pricesRepository.save(priceEntity));
     }
 }
