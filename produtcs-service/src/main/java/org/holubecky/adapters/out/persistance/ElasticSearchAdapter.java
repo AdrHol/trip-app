@@ -3,6 +3,7 @@ package org.holubecky.adapters.out.persistance;
 import co.elastic.clients.elasticsearch._types.query_dsl.BoolQuery;
 import co.elastic.clients.elasticsearch._types.query_dsl.GeoDistanceQuery;
 import co.elastic.clients.elasticsearch._types.query_dsl.MoreLikeThisQuery;
+import co.elastic.clients.elasticsearch._types.query_dsl.NestedQuery;
 import lombok.RequiredArgsConstructor;
 import org.holubecky.adapters.out.persistance.repository.query.QueriesBuilder;
 import org.holubecky.application.domain.model.Product;
@@ -32,9 +33,9 @@ public class ElasticSearchAdapter implements CreateProductPort, RetrieveProductP
         MoreLikeThisQuery mlt = queriesBuilder.fullTextQuery(product.getTitle(), product.getDescription());
         GeoDistanceQuery geoQuery = queriesBuilder.findInArea(product.getLocation().getLon(),
                                                             product.getLocation().getLat(),
-                                                            "2km");
-
-        BoolQuery andQuery = BoolQuery.of(q -> q.must(mlt._toQuery()).must(geoQuery._toQuery()));
+                                                            "5km");
+        NestedQuery nestedQuery = NestedQuery.of(q-> q.path("locationEntity").query(geoQuery._toQuery()));
+        BoolQuery andQuery = BoolQuery.of(q -> q.must(mlt._toQuery()).filter(nestedQuery._toQuery()));
         Query nativeQuery = NativeQuery.builder().withQuery(andQuery._toQuery()).build();
 
         return elasticsearchOperations.search(nativeQuery, ProductEntity.class).stream()

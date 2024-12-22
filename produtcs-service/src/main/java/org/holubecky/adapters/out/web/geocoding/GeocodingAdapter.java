@@ -16,7 +16,7 @@ import java.util.List;
 public class GeocodingAdapter implements GeoCodingPort {
 
     private final LocationiqClient geocodingClient;
-    private final String API = "secret";
+    private final String API = "";
 
     @Override
     public Location getLocationByCoordinates(Double lon, Double lat) {

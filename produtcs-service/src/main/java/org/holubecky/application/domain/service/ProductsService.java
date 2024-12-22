@@ -31,7 +31,7 @@ public class ProductsService implements CreateProductUseCase, FetchProductUseCas
 
     @Override
     public ProductRequestResponse fetchSimilarProducts(ProductCreationRequest productCreationRequest) {
-        Product requestedProduct = prepareProduct(productCreationRequest);
+        Product requestedProduct = prepareQueryProduct(productCreationRequest);
         checkLocationData(requestedProduct, productCreationRequest);
         List<ProductDTO> result = createProductPort.fetchSimilarProducts(requestedProduct).stream()
                 .map(mapper::mapProductToDto).toList();
@@ -80,13 +80,19 @@ public class ProductsService implements CreateProductUseCase, FetchProductUseCas
         return ProductRequestResponse.builder().response(status.get()).body(body).build();
     }
 
-    private Product prepareProduct(ProductCreationRequest productCreationRequest){
+    private Product prepareQueryProduct(ProductCreationRequest productCreationRequest){
         return Product.builder()
                 .description(productCreationRequest.getDescription())
                 .title(productCreationRequest.getTitle())
+                .location(Location.builder().lon(productCreationRequest.getLon()).lat(productCreationRequest.getLat())
+                        .country(productCreationRequest.getCountry()).city(productCreationRequest.getCity()).build())
                 .build();
     }
     private void checkLocationData(Product domainObject, ProductCreationRequest productCreationRequest){
+        if(productCreationRequest.hasCityAndCountry() && productCreationRequest.hasCoordinatesFilled()) {
+            return;
+        }
+
         Location newLocation = productCreationRequest.hasCoordinatesFilled() ?
                 geoCodingPort.getLocationByCoordinates(productCreationRequest.getLon(), productCreationRequest.getLat())
                 : geoCodingPort.getCoordinatesByLocation(productCreationRequest.getCity(), productCreationRequest.getCountry());

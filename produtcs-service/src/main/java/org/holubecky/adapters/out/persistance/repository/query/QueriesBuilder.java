@@ -1,5 +1,6 @@
 package org.holubecky.adapters.out.persistance.repository.query;
 
+import co.elastic.clients.elasticsearch._types.GeoDistanceType;
 import co.elastic.clients.elasticsearch._types.LatLonGeoLocation;
 import co.elastic.clients.elasticsearch._types.query_dsl.GeoDistanceQuery;
 import co.elastic.clients.elasticsearch._types.query_dsl.Like;
@@ -25,6 +26,7 @@ public class QueriesBuilder {
     public GeoDistanceQuery findInArea(Double lon, Double lat, String area){
         return GeoDistanceQuery.of(query -> query.field("locationEntity.coordinates")
                 .location(loc -> loc.latlon(new LatLonGeoLocation.Builder().lat(lat).lon(lon).build()))
+                .distanceType(GeoDistanceType.Arc)
                 .distance(area));
     }
 }

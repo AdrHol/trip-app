@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.holubecky.adapters.in.web.exceptions.InvalidCommandException;
 import org.holubecky.adapters.out.persistance.repository.ElasticSearchRepository;
 import org.holubecky.adapters.out.persistance.repository.entity.ProductEntity;
-import org.holubecky.application.domain.model.Product;
 import org.holubecky.application.ports.in.web.CreateProductUseCase;
 import org.holubecky.application.ports.in.web.FetchProductUseCase;
 import org.holubecky.application.ports.in.web.dto.ProductCreationRequest;
