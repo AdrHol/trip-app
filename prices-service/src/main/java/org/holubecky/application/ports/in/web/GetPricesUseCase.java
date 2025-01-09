@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface GetPricesUseCase {
     List<PriceDTO> getRecentlySearchedPrices();
-    List<PriceDTO> getPricesByCoordinates(Double longitude, Double latitude);
+    List<PriceDTO> getPricesByCoordinates(Double longitude, Double latitude, String productId);
     List<PriceDTO> getPricesByCityAndCountry(String city, String country);
     List<PriceDTO> getPricesByProductId(String productId);
 

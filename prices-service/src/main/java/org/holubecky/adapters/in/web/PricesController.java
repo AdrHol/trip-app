@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/prices")
+@RequestMapping("/v1")
 @RequiredArgsConstructor
 public class PricesController {
 
@@ -31,17 +31,23 @@ public class PricesController {
 
     @GetMapping(params = {"long", "lat"})
     public ResponseEntity<List<PriceDTO>> getPricesByCoordinates(@RequestParam("long") String longitude,
-                                                              @RequestParam("lat") String latitude) {
-        return ResponseEntity.ok().body(getPricesUseCase.getPricesByCoordinates(Double.parseDouble(longitude), Double.parseDouble(latitude)));
+                                                                 @RequestParam("lat") String latitude,
+                                                                 @RequestParam(value = "prodId", required = false) String productId) {
+        String product = productId == null ? "" : productId;
+        return ResponseEntity.ok().body(getPricesUseCase.getPricesByCoordinates(Double.parseDouble(longitude),
+                Double.parseDouble(latitude),
+                product));
     }
 
     @GetMapping(params = {"city", "country"})
     public ResponseEntity<List<PriceDTO>> getPricesByCityAndCountry(@RequestParam("city") String city,
-                                                                 @RequestParam("country") String country){
+                                                                    @RequestParam("country") String country,
+                                                                    @RequestParam(value = "prodId", required = false) String productId){
+        String product = productId == null ? "" : productId;
         return ResponseEntity.ok().body(getPricesUseCase.getPricesByCityAndCountry(city, country));
     }
 
-    @PostMapping
+    @PostMapping("/add")
     public ResponseEntity<PriceDTO> postPrice(@RequestBody CreatePriceCommand createPriceCommand){
         return ResponseEntity.ok(newPriceUseCase.createPriceUseCase(createPriceCommand));
     }

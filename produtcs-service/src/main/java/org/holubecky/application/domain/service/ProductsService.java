@@ -32,7 +32,7 @@ public class ProductsService implements CreateProductUseCase, FetchProductUseCas
     @Override
     public ProductRequestResponse fetchSimilarProducts(ProductCreationRequest productCreationRequest) {
         Product requestedProduct = prepareQueryProduct(productCreationRequest);
-        checkLocationData(requestedProduct, productCreationRequest);
+//        checkLocationData(requestedProduct, productCreationRequest);
         List<ProductDTO> result = createProductPort.fetchSimilarProducts(requestedProduct).stream()
                 .map(mapper::mapProductToDto).toList();
         RequestStatus status = result.isEmpty() ? RequestStatus.ENTITY_NOT_FOUND : RequestStatus.ENTITY_FOUND;
@@ -43,7 +43,7 @@ public class ProductsService implements CreateProductUseCase, FetchProductUseCas
     @Override
     public ProductRequestResponse addNewProduct(ProductCreationRequest productCreationRequest) {
         Product newProduct = mapper.mapCreationRequestToModel(productCreationRequest);
-        checkLocationData(newProduct, productCreationRequest);
+//        checkLocationData(newProduct, productCreationRequest);
         List<ProductDTO> body = new ArrayList<>();
         Product created = createProductPort.saveProduct(newProduct);
         RequestStatus status = RequestStatus.ENTITY_NOT_FOUND;
@@ -75,28 +75,38 @@ public class ProductsService implements CreateProductUseCase, FetchProductUseCas
     @Override
     public ProductRequestResponse getProductByTitleAndOrDescription(Optional<String> title, Optional<String> description) {
         List<Product> searchResult = retrieveProductPort.fetchProductsBySimilarDescription(title.orElse(""), description.orElse(""));
-        List<ProductDTO> body = searchResult.stream().map(mapper::mapProductToDto).toList();
-        RequestStatus status = searchResult.isEmpty() ? RequestStatus.ENTITY_NOT_FOUND : RequestStatus.ENTITY_FOUND;
-        return ProductRequestResponse.builder().response(status.get()).body(body).build();
+        return buildResponse(searchResult);
+    }
+
+    @Override
+    public ProductRequestResponse getProductByAutocompleteTitle(String title) {
+        List<Product> searchResult = retrieveProductPort.autocompleteTitle(title);
+        return buildResponse(searchResult);
     }
 
     private Product prepareQueryProduct(ProductCreationRequest productCreationRequest){
         return Product.builder()
                 .description(productCreationRequest.getDescription())
                 .title(productCreationRequest.getTitle())
-                .location(Location.builder().lon(productCreationRequest.getLon()).lat(productCreationRequest.getLat())
-                        .country(productCreationRequest.getCountry()).city(productCreationRequest.getCity()).build())
+//                .location(Location.builder().lon(productCreationRequest.getLon()).lat(productCreationRequest.getLat())
+//                        .country(productCreationRequest.getCountry()).city(productCreationRequest.getCity()).build())
                 .build();
     }
-    private void checkLocationData(Product domainObject, ProductCreationRequest productCreationRequest){
-        if(productCreationRequest.hasCityAndCountry() && productCreationRequest.hasCoordinatesFilled()) {
-            return;
-        }
+//    private void checkLocationData(Product domainObject, ProductCreationRequest productCreationRequest){
+//        if(productCreationRequest.hasCityAndCountry() && productCreationRequest.hasCoordinatesFilled()) {
+//            return;
+//        }
+//
+//        Location newLocation = productCreationRequest.hasCoordinatesFilled() ?
+//                geoCodingPort.getLocationByCoordinates(productCreationRequest.getLon(), productCreationRequest.getLat())
+//                : geoCodingPort.getCoordinatesByLocation(productCreationRequest.getCity(), productCreationRequest.getCountry());
+//        domainObject.setLocation(newLocation);
+//    }
 
-        Location newLocation = productCreationRequest.hasCoordinatesFilled() ?
-                geoCodingPort.getLocationByCoordinates(productCreationRequest.getLon(), productCreationRequest.getLat())
-                : geoCodingPort.getCoordinatesByLocation(productCreationRequest.getCity(), productCreationRequest.getCountry());
-        domainObject.setLocation(newLocation);
+    private ProductRequestResponse buildResponse(List<Product> searchResult){
+        List<ProductDTO> body = searchResult.stream().map(mapper::mapProductToDto).toList();
+        RequestStatus status = searchResult.isEmpty() ? RequestStatus.ENTITY_NOT_FOUND : RequestStatus.ENTITY_FOUND;
+        return ProductRequestResponse.builder().response(status.get()).body(body).build();
     }
 
 }

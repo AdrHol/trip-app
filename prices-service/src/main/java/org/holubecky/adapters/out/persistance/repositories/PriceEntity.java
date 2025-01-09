@@ -1,29 +1,31 @@
 package org.holubecky.adapters.out.persistance.repositories;
 
-import jakarta.persistence.*;
-import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.holubecky.application.domain.entities.Cost;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.elasticsearch.annotations.Document;
+import org.springframework.data.elasticsearch.annotations.Field;
+import org.springframework.data.elasticsearch.annotations.FieldType;
 
 import java.time.LocalDateTime;
 
 
-@Entity @Table(name = "prices")
+@Document(indexName = "prices")
 @Getter @Setter
 @NoArgsConstructor
 public class PriceEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    private String id;
     private String userId;
+    @Field(type = FieldType.Keyword)
     private String productId;
+    @CreatedDate
+    @Field(type = FieldType.Date)
     private LocalDateTime postedAt;
-    @Embedded
-    private Cost cost;
-    private String city;
-    private String country;
-    private Double latitude;
-    private Double longitude;
+    @Field(type = FieldType.Nested)
+    private CostEntity cost;
+    @Field(type = FieldType.Nested)
+    private LocationEntity locationEntity;
 }

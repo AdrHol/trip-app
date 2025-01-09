@@ -3,12 +3,54 @@
   <modelVersion>4.0.0</modelVersion>
   <build>
     <plugins>
+<!--      <plugin>-->
+<!--        <groupId>org.apache.maven.plugins</groupId>-->
+<!--        <artifactId>maven-assembly-plugin</artifactId>-->
+<!--        <version>3.1.1</version>-->
+<!--        <configuration>-->
+<!--          <descriptorRefs>-->
+<!--            <descriptorRef>jar-with-dependencies</descriptorRef>-->
+<!--          </descriptorRefs>-->
+<!--          <archive>-->
+<!--            <manifest>-->
+<!--              <addClasspath>true</addClasspath>-->
+<!--              <mainClass>org.holubecky.App</mainClass>-->
+<!--            </manifest>-->
+<!--          </archive>-->
+<!--        </configuration>-->
+<!--        <executions>-->
+<!--          <execution>-->
+<!--            <id>make-assembly</id>-->
+<!--            <phase>package</phase>-->
+<!--            <goals>-->
+<!--              <goal>single</goal>-->
+<!--            </goals>-->
+<!--          </execution>-->
+<!--        </executions>-->
+<!--      </plugin>-->
+      <plugin>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+        <version>3.0.0</version> <!-- Adjust version if needed -->
+        <configuration>
+          <mainClass>org.holubecky.App</mainClass>
+        </configuration>
+
+        <executions>
+          <execution>
+            <goals>
+              <goal>repackage</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
           <source>21</source>
           <target>21</target>
+          <compilerArgs>--enable-preview</compilerArgs>
         </configuration>
       </plugin>
     </plugins>
@@ -27,6 +69,23 @@
   </properties>
 
   <dependencies>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.cloud</groupId>
+      <artifactId>spring-cloud-starter-openfeign</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-data-elasticsearch</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.elasticsearch</groupId>
+      <artifactId>elasticsearch</artifactId>
+      <version>8.15.3</version>
+    </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>

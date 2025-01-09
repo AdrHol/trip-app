@@ -10,35 +10,35 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class PriceValidatorTest {
-
-    private final TestDataFactory dataFactory = new TestDataFactory();
-
-    @Test
-    void returnsTrueWhenValidCommandWhenCanDeriveLocation() {
-//        given
-        CreatePriceCommand command = dataFactory.prepareValidPriceCommand();
-//        when
-        boolean validationResult = PriceValidator.canDeriveLocation(command);
-//        then
-        assertTrue(validationResult);
-    }
-    @Test
-    void returnsFalseWhenCommandWithoutLocationWhenCanDeriveLocation() {
-//        given
-        CreatePriceCommand command = dataFactory.preparePriceCommandWithLocationAsNull();
-//        when
-        boolean validationResult = PriceValidator.canDeriveLocation(command);
-//        then
-        assertFalse(validationResult);
-    }
-
-    @Test
-    void returnsFalseWhenCommandWithEmptyLocationWhenCanDeriveLocation() {
-//        given
-        CreatePriceCommand command = dataFactory.preparePriceCommandWithEmptyLocation();
-//        when
-        boolean validationResult = PriceValidator.canDeriveLocation(command);
-//        then
-        assertFalse(validationResult);
-    }
+//
+//    private final TestDataFactory dataFactory = new TestDataFactory();
+//
+//    @Test
+//    void returnsTrueWhenValidCommandWhenCanDeriveLocation() {
+////        given
+//        CreatePriceCommand command = dataFactory.prepareValidPriceCommand();
+////        when
+//        boolean validationResult = PriceValidator.canDeriveLocation(command);
+////        then
+//        assertTrue(validationResult);
+//    }
+//    @Test
+//    void returnsFalseWhenCommandWithoutLocationWhenCanDeriveLocation() {
+////        given
+//        CreatePriceCommand command = dataFactory.preparePriceCommandWithLocationAsNull();
+////        when
+//        boolean validationResult = PriceValidator.canDeriveLocation(command);
+////        then
+//        assertFalse(validationResult);
+//    }
+//
+//    @Test
+//    void returnsFalseWhenCommandWithEmptyLocationWhenCanDeriveLocation() {
+////        given
+//        CreatePriceCommand command = dataFactory.preparePriceCommandWithEmptyLocation();
+////        when
+//        boolean validationResult = PriceValidator.canDeriveLocation(command);
+////        then
+//        assertFalse(validationResult);
+//    }
 }

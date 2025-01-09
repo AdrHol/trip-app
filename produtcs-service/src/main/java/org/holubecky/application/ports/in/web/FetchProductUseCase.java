@@ -8,4 +8,5 @@ import java.util.Optional;
 public interface FetchProductUseCase {
     ProductRequestResponse getProductById(String id);
     ProductRequestResponse getProductByTitleAndOrDescription(Optional<String> title, Optional<String> description);
+    ProductRequestResponse getProductByAutocompleteTitle(String title);
 }

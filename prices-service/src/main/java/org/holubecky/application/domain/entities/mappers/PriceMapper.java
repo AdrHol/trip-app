@@ -1,5 +1,7 @@
 package org.holubecky.application.domain.entities.mappers;
 
+import org.holubecky.adapters.out.persistance.repositories.CostEntity;
+import org.holubecky.adapters.out.persistance.repositories.LocationEntity;
 import org.holubecky.adapters.out.persistance.repositories.PriceEntity;
 import org.holubecky.adapters.out.web.services.product.dto.ProductDTO;
 import org.holubecky.application.domain.entities.Cost;
@@ -9,6 +11,8 @@ import org.holubecky.application.domain.exceptions.LocationNotFoundException;
 import org.holubecky.application.ports.in.web.commands.CreatePriceCommand;
 import org.holubecky.application.ports.out.web.dto.LocationDTO;
 import org.holubecky.application.ports.out.web.dto.PriceDTO;
+import org.holubecky.application.ports.out.web.geocoding.dto.Location;
+import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -26,8 +30,7 @@ public class PriceMapper {
     }
     public PriceDTO mapPriceToDTO(Price price){
         LocationDTO locationDTO = new LocationDTO(price.getCity(), price.getCountry(), price.getLongitude(), price.getLatitude());
-        PriceDTO priceDTO = new PriceDTO(price.getUserId(), price.getProductId(), locationDTO, price.getCost());
-        return priceDTO;
+        return new PriceDTO(price.getUserId(), price.getProductId(), locationDTO, price.getCost());
     }
     public Price priceEntityToDomainModel(PriceEntity priceEntity){
         Price price = new Price();
@@ -36,10 +39,10 @@ public class PriceMapper {
         price.setProductId(priceEntity.getProductId());
         price.setCost(
                 Cost.builder().price(priceEntity.getCost().getPrice()).currency(priceEntity.getCost().getCurrency()).build());
-        price.setCity(priceEntity.getCity());
-        price.setCountry(priceEntity.getCountry());
-        price.setLatitude(priceEntity.getLatitude());
-        price.setLongitude(priceEntity.getLongitude());
+        price.setCity(priceEntity.getLocationEntity().getCity());
+        price.setCountry(priceEntity.getLocationEntity().getCountry());
+        price.setLatitude(priceEntity.getLocationEntity().getCoordinates().getLat());
+        price.setLongitude(priceEntity.getLocationEntity().getCoordinates().getLon());
 
         return price;
     }
@@ -52,11 +55,9 @@ public class PriceMapper {
         priceEntity.setUserId(price.getUserId());
         priceEntity.setProductId(price.getProductId());
         priceEntity.setCost(
-                Cost.builder().price(price.getCost().getPrice()).currency(price.getCost().getCurrency()).build());
-        priceEntity.setCity(price.getCity());
-        priceEntity.setCountry(price.getCountry());
-        priceEntity.setLatitude(price.getLatitude());
-        priceEntity.setLongitude(price.getLongitude());
+                CostEntity.builder().price(price.getCost().getPrice()).currency(price.getCost().getCurrency()).build());
+        priceEntity.setLocationEntity(LocationEntity.builder().coordinates(new GeoPoint(price.getLatitude(),
+                price.getLongitude())).city(price.getCity()).country(price.getCountry()).build());
 
         return priceEntity;
     }
@@ -67,5 +68,12 @@ public class PriceMapper {
         price.setCountry(productDTO.location().country());
         price.setLongitude(productDTO.location().lon());
         price.setLatitude(productDTO.location().lat());
+    }
+    public void mapLocation(Location location, Price price){
+        String city = location.getCity() != null ? location.getCity() : "NO_CITY";
+        price.setCity(city);
+        price.setCountry(location.getCountry());
+        price.setLatitude(location.getLat());
+        price.setLongitude(location.getLon());
     }
 }

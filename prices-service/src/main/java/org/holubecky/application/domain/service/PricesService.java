@@ -12,6 +12,8 @@ import org.holubecky.application.ports.in.web.commands.CreatePriceCommand;
 import org.holubecky.application.ports.out.persistance.PricesCreationPort;
 import org.holubecky.application.ports.out.persistance.PricesRetrievalPort;
 import org.holubecky.application.ports.out.web.dto.PriceDTO;
+import org.holubecky.application.ports.out.web.geocoding.GeoCodingPort;
+import org.holubecky.application.ports.out.web.geocoding.dto.Location;
 import org.holubecky.application.ports.out.web.services.product.ProductServicePort;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +27,7 @@ public class PricesService implements GetPricesUseCase, NewPriceUseCase {
     private final PricesRetrievalPort pricesRetrievalPort;
     private final PricesCreationPort pricesCreationPort;
     private final ProductServicePort productServicePort;
+    private final GeoCodingPort geoCodingPort;
     private final PriceMapper priceMapper;
 
     @Override
@@ -33,8 +36,8 @@ public class PricesService implements GetPricesUseCase, NewPriceUseCase {
     }
 
     @Override
-    public List<PriceDTO> getPricesByCoordinates(Double longitude, Double latitude) {
-        return pricesRetrievalPort.getPricesByCords(longitude, latitude).stream().map(priceMapper::mapPriceToDTO).toList();
+    public List<PriceDTO> getPricesByCoordinates(Double longitude, Double latitude, String productId) {
+        return pricesRetrievalPort.getPricesByCords(longitude, latitude, productId).stream().map(priceMapper::mapPriceToDTO).toList();
     }
 
     @Override
@@ -50,11 +53,20 @@ public class PricesService implements GetPricesUseCase, NewPriceUseCase {
     @Override
     public PriceDTO createPriceUseCase(CreatePriceCommand createPriceCommand) {
         Price price = priceMapper.mapCreateCommandToPrice(createPriceCommand);
-
-        ProductDTO productServiceResponse = productServicePort.requestProductDetails(createPriceCommand.productId());
-        priceMapper.mapProductResponseToPrice(productServiceResponse, price);
-
+        checkLocationData(price, createPriceCommand);
+//        ProductDTO productServiceResponse = productServicePort.requestProductDetails(createPriceCommand.productId());
+//        priceMapper.mapProductResponseToPrice(productServiceResponse, price);
         return priceMapper.mapPriceToDTO(pricesCreationPort.createPrice(price));
+    }
+
+    private void checkLocationData(Price domainObject, CreatePriceCommand productCreationRequest){
+
+        Location location = geoCodingPort.getLocationByCoordinates(productCreationRequest.lon(), productCreationRequest.lat());
+        priceMapper.mapLocation(location, domainObject);
+//        Location newLocation = productCreationRequest.hasCoordinatesFilled() ?
+//                geoCodingPort.getLocationByCoordinates(productCreationRequest.getLon(), productCreationRequest.getLat())
+//                : geoCodingPort.getCoordinatesByLocation(productCreationRequest.getCity(), productCreationRequest.getCountry());
+//        domainObject.setLocation(newLocation);
     }
 
 }

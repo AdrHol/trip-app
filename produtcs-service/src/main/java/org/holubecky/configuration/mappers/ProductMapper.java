@@ -21,12 +21,14 @@ public class ProductMapper {
             productEntity.setId(id);
         }
         productEntity.setTitle(product.getTitle());
+        productEntity.setTitle_as_type(product.getTitle());
+
         productEntity.setDescription(product.getDescription());
-        productEntity.setLocationEntity(
-                new LocationEntity(product.getLocation().getCity(),
-                        product.getLocation().getCountry(),
-                        new GeoPoint(product.getLocation().getLat(),
-                                product.getLocation().getLon())));
+//        productEntity.setLocationEntity(
+//                new LocationEntity(product.getLocation().getCity(),
+//                        product.getLocation().getCountry(),
+//                        new GeoPoint(product.getLocation().getLat(),
+//                                product.getLocation().getLon())));
 
         return productEntity;
     }
@@ -36,10 +38,10 @@ public class ProductMapper {
         product.setId(productEntity.getId());
         product.setTitle(productEntity.getTitle());
         product.setDescription(productEntity.getDescription());
-        product.setLocation(Location.builder().city(productEntity.getLocationEntity().getCity())
-                .country(productEntity.getLocationEntity().getCountry())
-                .lat(productEntity.getLocationEntity().getCoordinates().getLat())
-                .lon(productEntity.getLocationEntity().getCoordinates().getLon()).build());
+//        product.setLocation(Location.builder().city(productEntity.getLocationEntity().getCity())
+//                .country(productEntity.getLocationEntity().getCountry())
+//                .lat(productEntity.getLocationEntity().getCoordinates().getLat())
+//                .lon(productEntity.getLocationEntity().getCoordinates().getLon()).build());
         return product;
     }
 
@@ -47,21 +49,21 @@ public class ProductMapper {
         return ProductDTO.builder().id(product.getId())
                 .title(product.getTitle())
                 .description(product.getDescription())
-                .location(LocationDTO.builder().city(product.getLocation().getCity())
-                        .country(product.getLocation().getCountry())
-                        .lat(product.getLocation().getLat())
-                        .lon(product.getLocation().getLon())
-                        .build())
+//                .location(LocationDTO.builder().city(product.getLocation().getCity())
+//                        .country(product.getLocation().getCountry())
+//                        .lat(product.getLocation().getLat())
+//                        .lon(product.getLocation().getLon())
+//                        .build())
                 .build();
     }
     public Product mapCreationRequestToModel(ProductCreationRequest productCreationRequest){
         return Product.builder()
                 .title(productCreationRequest.getTitle())
                 .description(productCreationRequest.getDescription())
-                .location(Location.builder().city(productCreationRequest.getCity())
-                        .country(productCreationRequest.getCountry())
-                        .lat(productCreationRequest.getLat())
-                        .lon(productCreationRequest.getLon()).build())
+//                .location(Location.builder().city(productCreationRequest.getCity())
+//                        .country(productCreationRequest.getCountry())
+//                        .lat(productCreationRequest.getLat())
+//                        .lon(productCreationRequest.getLon()).build())
                 .build();
     }
 }

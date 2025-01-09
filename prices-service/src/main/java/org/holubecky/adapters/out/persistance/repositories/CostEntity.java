@@ -1,15 +1,15 @@
 package org.holubecky.adapters.out.persistance.repositories;
 
-import jakarta.persistence.Embeddable;
 import lombok.*;
+import org.springframework.data.elasticsearch.annotations.Field;
+import org.springframework.data.elasticsearch.annotations.FieldType;
 
-@Embeddable
-@NoArgsConstructor
 @Getter
-@Setter
 @Builder
+@NoArgsConstructor
 @AllArgsConstructor
 public class CostEntity {
+    @Field(type = FieldType.Keyword)
     private String currency;
     private long price;
 }

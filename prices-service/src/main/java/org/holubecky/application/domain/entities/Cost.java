@@ -1,9 +1,7 @@
 package org.holubecky.application.domain.entities;
 
-import jakarta.persistence.Embeddable;
 import lombok.*;
 
-@Embeddable
 @NoArgsConstructor
 @Getter
 @Setter

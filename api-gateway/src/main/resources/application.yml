@@ -1,0 +1,37 @@
+spring:
+  main:
+    web-application-type: reactive
+  cloud:
+    gateway:
+      globalcors:
+        corsConfigurations:
+          '[/**]': # Apply to all paths
+            allowedOrigins: "http://localhost:4200"
+            allowedMethods: "*"
+            allowedHeaders: "*"
+            allowCredentials: true
+      routes:
+        - id: products-service
+          uri: "http://products-service:8081"
+          predicates:
+            - Path=/products/**
+          filters:
+            - RewritePath=/products/(?<remaining>.*), /${remaining}
+        - id: prices-service
+          uri: "http://prices-service:8082"
+          predicates:
+              - Path=/prices/**
+          filters:
+              - RewritePath=/prices/(?<remaining>.*), /${remaining}
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG
+management:
+  endpoints:
+    web:
+      exposure:
+        include:
+        - "health"
+        - "info"
+        - "gateway"
+        - "metrics"

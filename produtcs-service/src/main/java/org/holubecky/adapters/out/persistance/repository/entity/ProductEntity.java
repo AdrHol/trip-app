@@ -21,12 +21,12 @@ public class ProductEntity {
     private String id;
     @Field(type = FieldType.Text, analyzer = "standard")
     private String title;
+    @Field(type = FieldType.Search_As_You_Type)
+    private String title_as_type;
     @Field(type = FieldType.Text, analyzer = "standard")
     private String description;
     @CreatedDate
     @Field(type = FieldType.Date)
     private LocalDateTime createdAt;
     private String createdBy;
-    @Field(type = FieldType.Nested)
-    private LocationEntity locationEntity;
 }

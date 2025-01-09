@@ -42,9 +42,9 @@ public class ProductsController {
 
     @PostMapping()
     public ResponseEntity<ProductRequestResponse> fetchSimilarProductsInArea(@RequestBody ProductCreationRequest productCreationRequest){
-        if(!productCreationRequest.hasCityAndCountry() && !productCreationRequest.hasCoordinatesFilled()){
-            throw new InvalidCommandException();
-        }
+//        if(!productCreationRequest.hasCityAndCountry() && !productCreationRequest.hasCoordinatesFilled()){
+//            throw new InvalidCommandException();
+//        }
         return ResponseEntity.ok(createProductUseCase.fetchSimilarProducts(productCreationRequest));
     }
 
@@ -53,12 +53,16 @@ public class ProductsController {
         List<ProductEntity> result = ((PageImpl<ProductEntity>) elasticsearchOperations.findAll()).stream().toList();
         return ResponseEntity.ok(result);
     }
+    @GetMapping("/auto")
+    public ResponseEntity<ProductRequestResponse> searchAsTypeByTitle(@RequestParam("query") String query){
+        return ResponseEntity.ok(fetchProductUseCase.getProductByAutocompleteTitle(query));
+    }
 
     @PostMapping("/add")
     public ResponseEntity<ProductRequestResponse> addProduct(@RequestBody ProductCreationRequest productCreationRequest){
-        if(!productCreationRequest.hasCityAndCountry() && !productCreationRequest.hasCoordinatesFilled()){
-            throw new InvalidCommandException();
-        }
+//        if(!productCreationRequest.hasCityAndCountry() && !productCreationRequest.hasCoordinatesFilled()){
+//            throw new InvalidCommandException();
+//        }
 
         return ResponseEntity.ok(createProductUseCase.addNewProduct(productCreationRequest));
     }

@@ -1,13 +1,53 @@
-version: '3.8'
+networks:
+  trip-network:
+    external: true
 
 services:
   elasticsearch:
     image: elasticsearch:8.16.1
     container_name: "elasticsearch"
     environment:
+      - node.name=elasticsearch
       - discovery.type=single-node
       - xpack.security.enabled=false
     ports:
       - "9200:9200"
       - "9300:9300"
     restart: always
+    networks:
+      - trip-network
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:9200" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+  api-gateway:
+    image: trip-api-gateway:1.0
+    container_name: "api-gateway"
+    ports:
+      - "8080:8080"
+    networks:
+      - trip-network
+    depends_on:
+      - prices-service
+      - products-service
+  prices-service:
+    image: trip-prices-service:1.0
+    container_name: "prices-service"
+    ports:
+      - "8082:8082"
+    networks:
+      - trip-network
+    depends_on:
+      - elasticsearch
+  products-service:
+    image: trip-products-service:1.0
+    container_name: "products-service"
+    environment:
+      - SPRING_ELASTICSEARCH_URIS=elasticsearch:9200
+    ports:
+      - "8081:8081"
+    networks:
+      - trip-network
+    depends_on:
+      - elasticsearch

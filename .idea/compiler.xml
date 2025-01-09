@@ -11,10 +11,12 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="produtcs-service" />
+        <module name="api-gateway" />
         <module name="prices-service" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="analytics-service" target="1.8" />
       <module name="docker-test" target="19" />
       <module name="products-service" target="1.5" />
     </bytecodeTargetLevel>

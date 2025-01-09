@@ -1,9 +1,6 @@
 package org.holubecky.adapters.out.persistance;
 
-import co.elastic.clients.elasticsearch._types.query_dsl.BoolQuery;
-import co.elastic.clients.elasticsearch._types.query_dsl.GeoDistanceQuery;
-import co.elastic.clients.elasticsearch._types.query_dsl.MoreLikeThisQuery;
-import co.elastic.clients.elasticsearch._types.query_dsl.NestedQuery;
+import co.elastic.clients.elasticsearch._types.query_dsl.*;
 import lombok.RequiredArgsConstructor;
 import org.holubecky.adapters.out.persistance.repository.query.QueriesBuilder;
 import org.holubecky.application.domain.model.Product;
@@ -70,6 +67,20 @@ public class ElasticSearchAdapter implements CreateProductPort, RetrieveProductP
     public Optional<Product> fetchProductById(String id) {
         ProductEntity result = elasticsearchOperations.get(id, ProductEntity.class);
         return result != null ? Optional.of(mapper.mapEntityToDomain(result)) : Optional.empty();
+    }
+
+    @Override
+    public List<Product> autocompleteTitle(String title) {
+        MultiMatchQuery partialQuery = MultiMatchQuery.of(query -> query
+                .query(title)
+                .type(TextQueryType.BoolPrefix)
+                .fields("title_as_type"));
+        NativeQuery nativeQuery = NativeQuery.builder().withQuery(partialQuery._toQuery()).build();
+
+        return elasticsearchOperations.search(nativeQuery, ProductEntity.class).stream()
+                .map(SearchHit::getContent)
+                .map(mapper::mapEntityToDomain)
+                .toList();
     }
 
 

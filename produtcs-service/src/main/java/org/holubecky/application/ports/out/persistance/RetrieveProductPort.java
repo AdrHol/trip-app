@@ -12,6 +12,6 @@ public interface RetrieveProductPort {
     List<IndexInformation> getProducts();
     List<Product> fetchProductsBySimilarDescription(String title, String description);
     Optional<Product> fetchProductById(String id);
-
+    List<Product> autocompleteTitle(String title);
 
 }
