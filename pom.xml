@@ -13,6 +13,7 @@
         <module>prices-service</module>
         <module>produtcs-service</module>
         <module>api-gateway</module>
+        <module>analytics-service</module>
     </modules>
 
     <properties>
