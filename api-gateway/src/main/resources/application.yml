@@ -12,17 +12,23 @@ spring:
             allowCredentials: true
       routes:
         - id: products-service
-          uri: "http://products-service:8081"
+          uri: "http://localhost:8081"
           predicates:
             - Path=/products/**
           filters:
             - RewritePath=/products/(?<remaining>.*), /${remaining}
         - id: prices-service
-          uri: "http://prices-service:8082"
+          uri: "http://localhost:8082"
           predicates:
               - Path=/prices/**
           filters:
               - RewritePath=/prices/(?<remaining>.*), /${remaining}
+        - id: analytics-service
+          uri: "http://localhost:8083"
+          predicates:
+              - Path=/analyze/**
+          filters:
+              - RewritePath=/analyze/(?<remaining>.*), /${remaining}
 logging:
   level:
     org.springframework.cloud.gateway: DEBUG
