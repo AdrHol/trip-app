@@ -1,2 +1,14 @@
 server:
     port: 8083
+
+spring:
+    cloud:
+        stream:
+            default-binder: rabbit
+            bindings:
+                analyze-price-out:
+                    destination: new-price
+            rabbit:
+                binder:
+                    host: localhost
+                    port: 5672
